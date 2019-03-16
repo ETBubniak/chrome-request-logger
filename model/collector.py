@@ -10,8 +10,7 @@ def create_table_if_none():
         conn.execute("CREATE TABLE collectors ("
                      "id INTEGER AUTOINCREMENT PRIMARY KEY, "
                      "source_name VARCHAR(255), "
-                     "source_location VARCHAR(255), "
-                     "source_data_amount INT);")
+                     "source_location VARCHAR(255));")
         logging.info("Successfully created table: collectors")
     except Error as e:
         logging.warning(e)
@@ -23,6 +22,8 @@ def create_table_if_none():
 class Collector:
     source_name: str
     source_location: str
-    source_data_amount: int
-    pass
+
+    def save(self):
+        create_table_if_none()
+
 
