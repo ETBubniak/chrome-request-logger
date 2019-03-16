@@ -7,7 +7,19 @@ const callback = function(details){
 }
 
 const filter = {
-    "urls": new Array("http://*/*", "https://*/*")
+    "urls": ["http://*/*", "https://*/*"]
 };
 
 chrome.webRequest.onBeforeRequest.addListener(callback, filter);
+
+function storeToDB(request, currentURL) {
+	chrome.storage.sync.set({currentURL: request}, function(){
+		message('Request has been saved');
+    });
+};
+
+function getAllFromDB() {
+	chrome.storage.sync.get(null, function(contents) {
+		return contents;
+	});
+};
