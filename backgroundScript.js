@@ -87,9 +87,8 @@ function storeToDB(request, currentURL) {
 		if (items != null){
 			chrome.storage.sync.get(getCurrKey, function(result) {
 		        var array = result[currentURL]?result[currentURL]:[];
-
-		        array.unshift(newArrEntry);
-
+		        array.unshift(result[currentURL]);
+		        array.push(request);
 		        var jsonObj = {};
 		        jsonObj[currentURL] = array;
 		        chrome.storage.sync.set(jsonObj, function() {
