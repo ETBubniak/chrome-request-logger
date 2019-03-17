@@ -18,8 +18,10 @@ var population = [
 
 ]
 
-
 $( document ).ready(function() {
+
+	// initialize all modals
+	$('.modal').modal();
 
 	var margin = {top: 20, right: 20, bottom: 70, left: 40},
 		width = 800,
@@ -31,8 +33,6 @@ $( document ).ready(function() {
 				function(d){return d.count;})])
 			.rangeRound([0, width]);
 	var	y = d3.scaleBand().domain(['America','China','India','Britain']).rangeRound([height, 0]).padding(0.1);
-
-
 
 	var svg = d3.select("#bar-chart")
 	.append("svg")
@@ -60,5 +60,14 @@ $( document ).ready(function() {
 	.attr("width",function(d){
 		return x(d.count);
 	})
-	.attr("height", barWidth);
+	.attr("height",y.bandwidth())
+	.on("click",clickedBar);
 });
+
+/* Bar char click event handlers */
+function clickedBar(d,i){
+	console.log("d:"+d.country+" i:"+i)
+	var modal = M.Modal.getInstance($("#pieChartModal"));
+	modal.open()
+	$("#pieChartModal>.modal-content").html("<h1>"+d.country+"</h1>");
+}
