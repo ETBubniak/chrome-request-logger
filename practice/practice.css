@@ -14,6 +14,7 @@ body{
 	padding-left:100px;
 }
 
-.bar{
-	
+#pieChartModal{
+	width:600px;
+	height:400px;
 }
