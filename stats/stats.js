@@ -20,8 +20,7 @@ var population = [
 
 $( document ).ready(function() {
 
-	// initialize all modals
-	$('.modal').modal();
+	initialization();
 
 	var margin = {top: 20, right: 20, bottom: 70, left: 40},
 		width = $("body").width()-200,
@@ -250,4 +249,14 @@ function createPieChartFor(d){
 	.attr('x', legendRectSize + legendSpacing)
 	.attr('y', legendRectSize - legendSpacing)
 	.text(function(d) { return d; }); // return label
+}
+
+
+function initialization(){
+	// initialize all modals
+	$('.modal').modal();
+
+	// initialize all tabs
+	$('.tabs').tabs();
+	console.log("Tabs loaded");	
 }
