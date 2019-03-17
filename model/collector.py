@@ -15,7 +15,6 @@ def count_requests():
     except Error as e:
         logging.error(e)
     finally:
-        print("hit")
         conn.close()
 
 
