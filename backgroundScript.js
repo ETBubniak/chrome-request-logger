@@ -1,14 +1,24 @@
 // add event listener for a web requestDetails.
 
+function formatAsJson(initiator, target){
+    const collectorRegex = /(?<=(http|https):\/\/)\S+\//;
+    const requestRegex = /\w+(?=.com)/;
+    const formattedJson = {
+        "collector_name": initiator.match(collectorRegex)[0],
+        "request_source": target.match(requestRegex)[0]
+    };
+    return formattedJson;
+}
+
 function doesInitiatorMatchTarget(request){
     const regex = /\w+.(com)/;
     if (request.hasOwnProperty("initiator")){
-	    const initiatorDomain = request.initiator.match(regex);
-	    const initiatorMatchesTarget = request.url.includes(initiatorDomain[0]);
-	    return initiatorMatchesTarget;    	
+        const initiatorDomain = request.initiator.match(regex);
+        const initiatorMatchesTarget = request.url.includes(initiatorDomain[0]);
+        return initiatorMatchesTarget;        
     }
     else {
-    	return false;
+        return false;
     }
 }
 
@@ -72,39 +82,41 @@ const filter = {
     "urls": ["http://*/*", "https://*/*"]
 };
 
-function getObject(getCurrKey){
-	return new Promise((resolve, reject) => {
-		chrome.storage.sync.get(getCurrKey, function callback(items){
-			resolve(items)
-		});
-	});
+function getObject(currentKey){
+    return new Promise((resolve, reject) => {
+        chrome.storage.sync.get(currentKey, function callback(result){
+            resolve(result)
+        });
+    });
 }
+
 function storeToDB(request, currentURL) {
-	const dataObj = {};
-	const getCurrKey = new Array(currentURL);
-	getObject(getCurrKey)
-	.then(function resolved(items) {
-		if (items != null){
-			chrome.storage.sync.get(getCurrKey, function(result) {
-		        var array = result[currentURL]?result[currentURL]:[];
-		        array.unshift(result[currentURL]);
-		        array.push(request);
-		        var jsonObj = {};
-		        jsonObj[currentURL] = array;
-		        chrome.storage.sync.set(jsonObj, function() {
-		            console.log("Saved a new array item");
-		        });
-		    });
-		} else {
-			dataObj = {currentURL:[request]};
-			chrome.storage.sync.set(dataObj, function(){
-	    	if(!chrome.runtime.lastError){
-	        	console.log('Request has been saved');
-	    	}
-	    });
-		}
-	});	
+    const dataObj = {};
+    const currentKey = [currentURL];
+    getObject(currentKey)
+    .then(function resolved(result) {
+        if (result != null){
+            var array = (result[currentURL] ? result[currentURL]:[]);
+            array.push(request);
+            var jsonObj = {};
+            jsonObj[currentURL] = array;
+            chrome.storage.sync.set(jsonObj, function() {
+                console.log("Saved a new array item");
+            });
+        } else {
+            dataObj = {currentURL:[request]};
+            chrome.storage.sync.set(dataObj, function(){
+            if(!chrome.runtime.lastError){
+                console.log('Request has been saved');
+            }
+        });
+        }
+    });    
 };
+
+function clearAllFromDB(){
+    chrome.storage.sync.clear();
+}
 
 function getAllFromDB() {
     return new Promise((resolve, reject) => {
