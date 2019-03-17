@@ -2,15 +2,16 @@
 
 function postJsonObject(formattedJson){
     var xhr = new XMLHttpRequest();
-    var url = "datadiarrhea.net/collector";
+    var url = "http://www.bitoff.dev:5000/collector";
     xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-type", "application/json");
+    xhr.setRequestHeader("Content-Type", "application/json");
     xhr.onreadystatechange = function () { 
         if (xhr.readyState == 4 && xhr.status == 200) {
             var json = JSON.parse(xhr.responseText);
         }
     }
-    var data = JSON.stringify({formattedJson});
+    var data = JSON.stringify(formattedJson);
+    console.log(data);
     xhr.send(data);
 }
 
