@@ -1,12 +1,26 @@
 // add event listener for a web requestDetails.
 
+function postJsonObject(formattedJson){
+    var xhr = new XMLHttpRequest();
+    var url = "datadiarrhea.net/collector";
+    xhr.open("POST", url, true);
+    xhr.setRequestHeader("Content-type", "application/json");
+    xhr.onreadystatechange = function () { 
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            var json = JSON.parse(xhr.responseText);
+        }
+    }
+    var data = JSON.stringify({formattedJson});
+    xhr.send(data);
+}
+
 function formatAsJson(initiator, target){
-    const collectorRegex = /(?<=(http|https):\/\/)\S+\//;
+    const collectorRegex = /(?<=(https):\/\/)(www.)?\S+\//;
     const requestRegex = /\w+(?=.com)/;
     const formattedJson = {
-        "collector_name": initiator.match(collectorRegex)[0],
-        "request_source": target.match(requestRegex)[0]
-    };
+        "collector_name": initiator,
+        "request_source": target
+    };    
     return formattedJson;
 }
 
@@ -70,6 +84,8 @@ const callback = async function(request){
         const initiatorMatchesTarget = doesInitiatorMatchTarget(request);
         if ((!initiatorMatchesTarget)){
             getCurrentTabURL().then((currentURL) => {
+                const jsonToPost = formatAsJson(request.initiator, request.url);
+                postJsonObject(jsonToPost);
                 storeToDB(request, currentURL);
             }
             );
