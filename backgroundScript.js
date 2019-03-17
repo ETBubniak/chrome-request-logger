@@ -1,5 +1,12 @@
 // add event listener for a web requestDetails.
 
+function doesInitiatorMatchTarget(request){
+    const regex = /\w+.(com)/
+    const initiatorDomain = request.initiator.match(regex);
+    const initiatorMatchesTarget = request.url.includes(initiatorDomain[0]);
+    return initiatorMatchesTarget;
+}
+
 function getCurrentTabId(){
     return new Promise(function(resolve, reject){
         chrome.tabs.query({"active": true, "currentWindow": true}, (tab) => {
@@ -31,9 +38,13 @@ function isPartOfCurrentTab(request){
 
 const callback = async function(request){
     const partOfCurrentTab = await isPartOfCurrentTab(request);
-    if ((partOfCurrentTab)){
-        console.log(request);
+    if (partOfCurrentTab) {
+        const initiatorMatchesTarget = doesInitiatorMatchTarget(request);
+        if ((!initiatorMatchesTarget)){
+            console.log(request);
+        }
     }
+
 };
 
 const filter = {
