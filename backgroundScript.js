@@ -85,29 +85,30 @@ function storeToDB(request, currentURL) {
 	getObject(getCurrKey)
 	.then(function resolved(items) {
 		if (items != null){
-			chrome.storage.sync.get(getCurrKey, function(newValue) {
-				if (newValue instanceof Array) {
-					newValue.push(request);
-					dataObj[currentURL] = newValue;
-				} else {
-					const newArray = new Array(newValue, request);
-					dataObj[currentURL] = newArray;
-				}
-			});
+			chrome.storage.sync.get(getCurrKey, function(result) {
+		        var array = result[currentURL]?result[currentURL]:[];
+		        array.unshift(result[currentURL]);
+		        array.push(request);
+		        var jsonObj = {};
+		        jsonObj[currentURL] = array;
+		        chrome.storage.sync.set(jsonObj, function() {
+		            console.log("Saved a new array item");
+		        });
+		    });
 		} else {
-			dataObj[currentURL] = request;
-		}
-	    chrome.storage.sync.set(dataObj, function(){
+			dataObj = {currentURL:[request]};
+			chrome.storage.sync.set(dataObj, function(){
 	    	if(!chrome.runtime.lastError){
 	        	console.log('Request has been saved');
 	    	}
 	    });
+		}
 	});	
 };
 
 function getAllFromDB() {
     return new Promise((resolve, reject) => {
-        chrome.storage.sync.get(null, function(contents) {
+        chrome.storage.sync.get(function(contents) {
             console.log(contents)
             if (contents){
                 resolve(contents);
