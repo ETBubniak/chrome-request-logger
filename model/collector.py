@@ -9,11 +9,13 @@ def count_requests():
     cursor = conn.cursor()
     try:
         cursor.execute("SELECT collector_name, COUNT(*) FROM collectors GROUP BY collector_name;")
-        data = cursor.fetchall()
-        yield data
+        raw_data = cursor.fetchall()
+        data = [list(x) for x in raw_data]
+        return data
     except Error as e:
         logging.error(e)
     finally:
+        print("hit")
         conn.close()
 
 
@@ -21,7 +23,7 @@ def create_table_if_none():
     conn = sqlite3.connect("data.db")
     cursor = conn.cursor()
     try:
-        cursor.execute("CREATE TABLE collectors ("
+        cursor.execute("CREATE TABLE IF NOT EXISTS collectors ("
                        "INTEGER PRIMARY KEY, "
                        "collector_name VARCHAR(255), "
                        "request_location VARCHAR(255));")
