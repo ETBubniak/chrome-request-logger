@@ -20,6 +20,19 @@ function getCurrentTabId(){
     });
 }
 
+function getCurrentTabURL(){
+    return new Promise(function(resolve, reject){
+        chrome.tabs.query({"active": true, "currentWindow": true}, (tab) => {
+            if (tab.length > 0 ){
+                resolve(tab[0].url);
+            }
+            else {
+                reject("Failed for some reason");
+            }
+        });
+    });
+}
+
 function isPartOfCurrentTab(request){
     return new Promise((resolve, reject) => {
         getCurrentTabId()
@@ -41,7 +54,11 @@ const callback = async function(request){
     if (partOfCurrentTab) {
         const initiatorMatchesTarget = doesInitiatorMatchTarget(request);
         if ((!initiatorMatchesTarget)){
-            console.log(request);
+            getCurrentTabURL().then((currentURL) => {
+                storeToDB(request, currentURL);
+            }
+            )
+
         }
     }
 
@@ -51,4 +68,14 @@ const filter = {
     "urls": ["http://*/*", "https://*/*"]
 };
 
-chrome.webRequest.onCompleted.addListener(callback, filter);
+function storeToDB(request, currentURL) {
+    chrome.storage.sync.set({currentURL: request}, function(){
+        message('Request has been saved');
+    });
+};
+
+function getAllFromDB() {
+    chrome.storage.sync.get(null, function(contents) {
+        return contents;
+    });
+};
