@@ -7,9 +7,6 @@ app = Flask(__name__)
 @app.route('/')
 def hello_world():
     collectors = count_requests()
-
-    print(collectors)
-
     return render_template("index.html", collectors=collectors)
 
 
