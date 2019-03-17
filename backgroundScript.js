@@ -109,7 +109,7 @@ function storeToDB(request, currentURL) {
 
 function getAllFromDB() {
     return new Promise((resolve, reject) => {
-        chrome.storage.sync.get(null, function(contents) {
+        chrome.storage.sync.get(function(contents) {
             console.log(contents)
             if (contents){
                 resolve(contents);
