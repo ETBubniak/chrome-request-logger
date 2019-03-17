@@ -1,10 +1,15 @@
 // add event listener for a web requestDetails.
 
 function doesInitiatorMatchTarget(request){
-    const regex = /\w+.(com)/
-    const initiatorDomain = request.initiator.match(regex);
-    const initiatorMatchesTarget = request.url.includes(initiatorDomain[0]);
-    return initiatorMatchesTarget;
+    const regex = /\w+.(com)/;
+    if (request.hasOwnProperty("initiator")){
+	    const initiatorDomain = request.initiator.match(regex);
+	    const initiatorMatchesTarget = request.url.includes(initiatorDomain[0]);
+	    return initiatorMatchesTarget;    	
+    }
+    else {
+    	return false;
+    }
 }
 
 function getCurrentTabId(){
@@ -67,27 +72,37 @@ const filter = {
     "urls": ["http://*/*", "https://*/*"]
 };
 
+function getObject(getCurrKey){
+	return new Promise((resolve, reject) => {
+		chrome.storage.sync.get(getCurrKey, function callback(items){
+			resolve(items)
+		});
+	});
+}
 function storeToDB(request, currentURL) {
 	const dataObj = {};
-	if (chrome.storage.sync.get(currentURL) != null){
-		chrome.storage.sync.get(currentURL, function(newValue) {
-			if (newValue instanceof Array) {
-				newValue.push(request);
-				dataObj[currentURL] = newValue;
-			} else {
-				const newArray = new Array(newValue, request);
-				dataObj[currentURL] = newArray;
-			}
-		});
-	} else {
-		dataObj[currentURL] = request;
-	}
-    chrome.storage.sync.set(dataObj, function(){
-    	if(!chrome.runtime.lastError){
-        	console.log('Request has been saved');
-    	}
-    });
-	
+	const getCurrKey = new Array(currentURL);
+	getObject(getCurrKey)
+	.then(function resolved(items) {
+		if (items != null){
+			chrome.storage.sync.get(getCurrKey, function(newValue) {
+				if (newValue instanceof Array) {
+					newValue.push(request);
+					dataObj[currentURL] = newValue;
+				} else {
+					const newArray = new Array(newValue, request);
+					dataObj[currentURL] = newArray;
+				}
+			});
+		} else {
+			dataObj[currentURL] = request;
+		}
+	    chrome.storage.sync.set(dataObj, function(){
+	    	if(!chrome.runtime.lastError){
+	        	console.log('Request has been saved');
+	    	}
+	    });
+	});	
 };
 
 function getAllFromDB() {
