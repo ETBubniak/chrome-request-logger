@@ -57,8 +57,7 @@ const callback = async function(request){
             getCurrentTabURL().then((currentURL) => {
                 storeToDB(request, currentURL);
             }
-            )
-
+            );
         }
     }
 
@@ -70,12 +69,22 @@ const filter = {
 
 function storeToDB(request, currentURL) {
     chrome.storage.sync.set({currentURL: request}, function(){
-        message('Request has been saved');
+        console.log('Request has been saved');
     });
 };
 
 function getAllFromDB() {
-    chrome.storage.sync.get(null, function(contents) {
-        return contents;
+    return new Promise((resolve, reject) => {
+        chrome.storage.sync.get(null, function(contents) {
+            console.log(contents)
+            if (contents){
+                resolve(contents);
+            }
+            else {
+                reject("contents null/undefined for some reason");
+            }
+        });
     });
 };
+
+chrome.webRequest.onCompleted.addListener(callback, filter);
