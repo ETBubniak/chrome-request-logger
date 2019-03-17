@@ -24,7 +24,7 @@ $( document ).ready(function() {
 	$('.modal').modal();
 
 	var margin = {top: 20, right: 20, bottom: 70, left: 40},
-		width = 800,
+		width = $("body").width()-200,
 		height = 800 ;
 	var barPadding = 10;
 	var barWidth = (height-200)/population.length;
