@@ -68,9 +68,26 @@ const filter = {
 };
 
 function storeToDB(request, currentURL) {
-    chrome.storage.sync.set({currentURL: request}, function(){
-        console.log('Request has been saved');
+	const dataObj = {};
+	if (chrome.storage.sync.get(currentURL) != null){
+		chrome.storage.sync.get(currentURL, function(newValue) {
+			if (newValue instanceof Array) {
+				newValue.push(request);
+				dataObj[currentURL] = newValue;
+			} else {
+				const newArray = new Array(newValue, request);
+				dataObj[currentURL] = newArray;
+			}
+		});
+	} else {
+		dataObj[currentURL] = request;
+	}
+    chrome.storage.sync.set(dataObj, function(){
+    	if(!chrome.runtime.lastError){
+        	console.log('Request has been saved');
+    	}
     });
+	
 };
 
 function getAllFromDB() {
