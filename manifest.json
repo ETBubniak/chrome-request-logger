@@ -1,17 +1,24 @@
 {
-    "name": "Chrome Request Logger",
+    "name": "Network Cop",
     "version": "0.10",
     "description": "hackRPI 2019 project. Logs requests made to other sides (e.g. to CDNs or ad networks) and provides a visualization to the user.",
     "manifest_version": 2,
     "author": ["Evan Bubniak", "David Quach", "Chris Baudouin Jr.", "Nikhil Verma"],
     "browser_action": {
-        "default_title": "Chrome Request Logger",
+        "default_title": "Network Cop",
         "default_popup": "popup.html"
     },
     "background": {
         "scripts": ["backgroundScript.js"],
         "persistent": true
-    },
+	},
+	"content_scripts": [
+		{
+			"matches": ["https://www.example.org/*"],
+			"js": ["./libs/jquery-3.3.1.min.js","./libs/materialize.min.js","./libs/d3.v5.min.js","./stats/stats.js"],
+			"css": ["./stats/style.css"]
+		}
+	  ],
     "permissions": [
         "contextMenus",
         "privacy",

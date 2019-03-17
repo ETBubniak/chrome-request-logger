@@ -1,18 +1,42 @@
 <html>
     <head>
         <title>Chrome Request Logger</title>
-		<!-- Add script link to any JS that the popup needs when present -->
-		<!-- TODO -->
+		
+		<script
+		src="./libs/jquery-3.3.1.min.js"
+		integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+		crossorigin="anonymous"></script>
+		<!-- Compiled and minified CSS -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+		<!-- Compiled and minified JavaScript -->
+		<script src="./libs/materialize.min.js"></script>
+		<script src="./libs/d3.v5.min.js"></script>
 		<link rel="stylesheet" href="./stats/style.css">
+		<script src="./stats/stats.js"></script>
     </head>
     <body>
         <div id="extension-popup">
-			<!-- <p>Welcome to the Chrome Request Logger.</p> -->
-			<h3>Request Logger</h3>
+			<h5>Network Cop</h5>
 
-            <p>Here are the requests made by the page you are currently on:</p>
-            <!-- Add list of URLs to which the current page has made requests -->
-            <p>Please visit <a href="index.html">here</a> for more information about your browser's request history.</p>
-        </div>
-    </body>
+			<div class="row">
+					<div class="col s12">
+					  <ul class="tabs">
+						<li class="tab col s6"><a href="#resources-tab" class="active">Resources</a></li>
+						<li class="tab col s6"><a href="#links-tab">Links</a></li>
+					  </ul>
+					</div>
+					<div id="resources-tab" class="col s12 tab-content">
+						<div id="resources-pie-chart">
+
+						</div>
+					</div>
+					<div id="links-tab" class="col s12 tab-content">
+						<div id="links-bar-chart">
+						</div>
+					</div>
+			</div>
+			<div id="footer-redirection">Please visit <a href="http//datadiarrhea.net">here</a> for a more general usage.</div>
+		</div>
+	</body>
 </html>
