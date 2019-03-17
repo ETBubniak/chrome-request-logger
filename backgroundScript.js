@@ -2,14 +2,9 @@
 
 function postJsonObject(formattedJson){
     var xhr = new XMLHttpRequest();
-    var url = "http://www.bitoff.dev:5000/collector";
+    var url = "https://cop.bitoff.dev/collector";
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-Type", "application/json");
-    xhr.onreadystatechange = function () { 
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            var json = JSON.parse(xhr.responseText);
-        }
-    }
     var data = JSON.stringify(formattedJson);
     console.log(data);
     xhr.send(data);
