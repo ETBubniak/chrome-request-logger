@@ -1,18 +1,18 @@
 var population = [
 	{
-		country:"America",
+		country:"Google",
 		count:300
 	},
 	{
-		country:"China",
+		country:"Facebook",
 		count:1600
 	},
 	{
-		country:"India",
+		country:"Devpost",
 		count:1300
 	},
 	{
-		country:"Britain",
+		country:"Amazon",
 		count:200
 	},
 
@@ -23,7 +23,12 @@ $( document ).ready(function() {
 	initialization();
 	createLinksBarChart();
 	createPieChart();
-	computeOutgoingUrls();
+	// getAllFromDB()
+	// .then(
+	// 	dataset =>{
+	// 	}
+	// )
+	// computeOutgoingUrls();
 });
 
 function createLinksBarChart(){
@@ -35,7 +40,7 @@ function createLinksBarChart(){
 			.domain([0,d3.max(population,
 				function(d){return d.count;})])
 			.rangeRound([0, width]);
-	var	y = d3.scaleBand().domain(['America','China','India','Britain']).rangeRound([height, 0]).padding(0.1);
+	var	y = d3.scaleBand().domain(['Google','Facebook','Devpost','Amazon']).rangeRound([height, 0]).padding(0.1);
 
 	var svg = d3.select("#links-bar-chart")
 	.append("svg")
@@ -75,31 +80,16 @@ function clickedBar(d,i){
 	modal.open()
 }
 
-function createPieChart(){
+function createPieChart(dataset){
 	// define data
 	var dataset = [
-		{label: "Assamese", count: 13},
-		{label: "Bengali", count: 83},
-		{label: "Bodo", count: 1.4},
-		{label: "Dogri", count: 2.3},
-		{label: "Gujarati", count: 46},
-		{label: "Hindi", count: 300},
-		{label: "Kannada", count: 38},
-		{label: "Kashmiri", count: 5.5},
-		{label: "Konkani", count: 5},
-		{label: "Maithili", count: 20},
-		{label: "Malayalam", count: 33},
-		{label: "Manipuri", count: 1.5},
-		{label: "Marathi", count: 72},
-		{label: "Nepali", count: 2.9},
-		{label: "Oriya", count: 33},
-		{label: "Punjabi", count: 29},
-		{label: "Sanskrit", count: 0.01},
-		{label: "Santhali", count: 6.5},
-		{label: "Sindhi", count: 2.5},
-		{label: "Tamil", count: 61},
-		{label: "Telugu", count: 74},
-		{label: "Urdu", count: 52}
+		{label: "css", count: 13},
+		{label: "js", count: 83},
+		{label: "img", count: 1.4},
+		{label: "gif", count: 2.3},
+		{label: "png", count: 46},
+		{label: "svg", count: 38},
+		{label: "xml", count: 6.5},
 	];
 
 	// chart dimensions
@@ -114,7 +104,7 @@ function createPieChart(){
 	var legendSpacing = 6; // defines spacing between squares
 
 	// define color scale
-	var color = d3.scaleOrdinal(['#4daf4a','#377eb8','#ff7f00','#984ea3','#e41a1c']);
+	var color = d3.scaleOrdinal(['#4daf4a','#377eb8','#ff7f00','#984ea3','#e41a1c','#ff7f20','#684ea3','#e41a1c','#8f7f00','#183ea3','#e62a1c']);
 	// more color scales: https://bl.ocks.org/pstuffa/3393ff2711a53975040077b7453781a9
 
 	var svg = d3.select('#resources-pie-chart') // select element in the DOM where the modal exists
@@ -270,4 +260,35 @@ function computeOutgoingUrls(){
 			console.log(results);
 		});
 	});
+}
+
+function getAllFromDB() {
+    return new Promise((resolve, reject) => {
+        chrome.storage.sync.get(function(contents) {
+            console.log(contents)
+            if (contents){
+                resolve(transform(contents));
+            }
+            else {
+                reject("contents null/undefined for some reason");
+            }
+        });
+    });
+};
+
+function transform(data){
+	var cleaned=[];
+	for (var key in data) {
+		console.log("data kd "+key);
+		if (data.hasOwnProperty(key) ) {
+			
+			cleaned.push({
+				name:key,
+				list:data.key
+			})
+
+			// console.log(key + " -> " + p[key]);
+		}
+	}
+	return cleaned;
 }
